@@ -25,11 +25,19 @@ const nextConfig: NextConfig = {
     ],
   },
   // Optimize for Vercel deployment
-  experimental: {
-    serverComponentsExternalPackages: ['genkit'],
+  serverExternalPackages: ['genkit'],
+  // Handle PDF rendering for web
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        canvas: false,
+        fs: false,
+        path: false,
+      };
+    }
+    return config;
   },
-  // Ensure proper build output
-  output: 'standalone',
 };
 
 export default nextConfig;
