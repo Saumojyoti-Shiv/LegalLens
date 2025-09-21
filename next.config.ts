@@ -24,6 +24,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Optimize for Vercel deployment
+  experimental: {
+    serverComponentsExternalPackages: ['genkit'],
+  },
+  // Ensure proper build output
+  output: 'standalone',
 };
 
 export default nextConfig;
