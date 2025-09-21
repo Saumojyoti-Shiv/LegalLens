@@ -7,12 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, ChevronRight, UploadCloud, File as FileIcon, X } from "lucide-react";
-import { pdfjs } from 'react-pdf';
 import mammoth from "mammoth";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-
-// Setting workerSrc for react-pdf
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 interface DocumentPanelProps {
   documentText: string;
@@ -39,6 +35,10 @@ export function DocumentPanel({ documentText, isAnalyzed, isLoading, onAnalyze, 
       try {
         let text = "";
         if (uploadedFile.type === "application/pdf") {
+          // Dynamic import to avoid build-time canvas dependency
+          const { pdfjs } = await import('react-pdf');
+          pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+          
           const arrayBuffer = await uploadedFile.arrayBuffer();
           const pdf = await pdfjs.getDocument(arrayBuffer).promise;
           const numPages = pdf.numPages;
